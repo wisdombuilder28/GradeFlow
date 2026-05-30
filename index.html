@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GradeFlow — Student Performance Dashboard</title>
+
+  <!-- ═══ PWA META TAGS ═══ -->
+  <meta name="description" content="Track, manage and analyse student academic performance with grade insights." />
+  <meta name="application-name" content="GradeFlow" />
+  <meta name="mobile-web-app-capable" content="yes" />
+
+  <!-- Theme colour — matches --accent token. Browsers use this for
+       the address bar and task switcher on Android / Chrome. -->
+  <meta name="theme-color" content="#0dd4b8" id="meta-theme-color" />
+
+  <!-- Apple PWA meta tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="GradeFlow" />
+
+  <!-- Apple touch icon -->
+  <link rel="apple-touch-icon" href="icons/icon-512x512.png" />
+
+  <!-- Manifest -->
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512x512.png" />
+  <link rel="shortcut icon" href="icons/icon-512x512.png" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ═══ SIDEBAR ═══ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <rect x="1" y="1" width="9" height="9" rx="2" fill="currentColor" opacity="0.9"/>
+          <rect x="12" y="1" width="9" height="9" rx="2" fill="currentColor" opacity="0.5"/>
+          <rect x="1" y="12" width="9" height="9" rx="2" fill="currentColor" opacity="0.5"/>
+          <rect x="12" y="12" width="9" height="9" rx="2" fill="currentColor" opacity="0.9"/>
+        </svg>
+      </div>
+      <span class="logo-text">GradeFlow</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <span class="nav-label">MAIN MENU</span>
+      <a class="nav-item" data-section="dashboard" href="#">
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="none">
+          <rect x="2" y="2" width="7" height="7" rx="1.5" fill="currentColor"/>
+          <rect x="11" y="2" width="7" height="7" rx="1.5" fill="currentColor" opacity=".5"/>
+          <rect x="2" y="11" width="7" height="7" rx="1.5" fill="currentColor" opacity=".5"/>
+          <rect x="11" y="11" width="7" height="7" rx="1.5" fill="currentColor"/>
+        </svg>
+        Dashboard
+        <span class="nav-badge" id="badge-count">0</span>
+      </a>
+      <a class="nav-item" data-section="add-subject" href="#">
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M10 7v6M7 10h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Add Subject
+      </a>
+      <a class="nav-item" data-section="analytics" href="#">
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="none">
+          <path d="M3 15l4-5 4 3 4-7 2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="17" cy="8" r="1.5" fill="currentColor"/>
+        </svg>
+        Analytics
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <span class="nav-label">PREFERENCES</span>
+      <div class="theme-toggle-row">
+        <div class="theme-info">
+          <svg class="nav-icon" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="4" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span>Dark Mode</span>
+        </div>
+        <button class="toggle-switch" id="theme-toggle" aria-label="Toggle theme">
+          <span class="toggle-thumb"></span>
+        </button>
+      </div>
+
+      <!-- Data I/O buttons -->
+      <div class="sidebar-io">
+        <button class="btn-io" id="btn-export" title="Export data as JSON">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+            <path d="M10 3v10M6 9l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 15h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          Export JSON
+        </button>
+        <button class="btn-io" id="btn-import" title="Import data from JSON">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+            <path d="M10 13V3M6 7l4-4 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 15h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          Import JSON
+        </button>
+        <!-- Hidden file input for import -->
+        <input type="file" id="import-file-input" accept=".json,application/json" style="display:none" />
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══ MOBILE HEADER ═══ -->
+  <header class="mobile-header">
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="mobile-logo">
+      <div class="logo-mark small">
+        <svg width="16" height="16" viewBox="0 0 22 22" fill="none">
+          <rect x="1" y="1" width="9" height="9" rx="2" fill="currentColor" opacity="0.9"/>
+          <rect x="12" y="1" width="9" height="9" rx="2" fill="currentColor" opacity="0.5"/>
+          <rect x="1" y="12" width="9" height="9" rx="2" fill="currentColor" opacity="0.5"/>
+          <rect x="12" y="12" width="9" height="9" rx="2" fill="currentColor" opacity="0.9"/>
+        </svg>
+      </div>
+      GradeFlow
+    </div>
+    <div style="width:40px"></div>
+  </header>
+
+  <!-- ═══ SIDEBAR OVERLAY (mobile) ═══ -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <!-- ═══ MAIN CONTENT ═══ -->
+  <main class="main-content">
+
+    <!-- ─── SECTION: DASHBOARD ─── -->
+    <section class="section hidden" id="section-dashboard">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Dashboard</h1>
+          <p class="page-subtitle">Track and manage your academic performance</p>
+        </div>
+        <button class="btn btn-primary" id="btn-goto-add">
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+            <path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Add Subject
+        </button>
+      </div>
+
+      <!-- STAT CARDS -->
+      <div class="stats-grid">
+        <div class="stat-card" id="stat-total">
+          <div class="stat-icon-wrap stat-icon-blue">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M4 5h12M4 10h12M4 15h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-label">Total Subjects</span>
+            <span class="stat-value" id="stat-total-val">0</span>
+          </div>
+          <div class="stat-trend" id="stat-total-sub">No subjects yet</div>
+        </div>
+
+        <div class="stat-card" id="stat-avg">
+          <div class="stat-icon-wrap stat-icon-cyan">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M3 10h4l2-6 4 12 2-6h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-label">Average Score</span>
+            <span class="stat-value" id="stat-avg-val">—</span>
+          </div>
+          <div class="stat-trend" id="stat-avg-sub">—</div>
+        </div>
+
+        <div class="stat-card" id="stat-high">
+          <div class="stat-icon-wrap stat-icon-green">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M10 3l2.06 4.18L17 8.09l-3.5 3.41.83 4.82L10 14l-4.33 2.32.83-4.82L3 8.09l4.94-.91L10 3z"
+                stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-label">Highest Score</span>
+            <span class="stat-value" id="stat-high-val">—</span>
+          </div>
+          <div class="stat-trend" id="stat-high-sub">—</div>
+        </div>
+
+        <div class="stat-card" id="stat-low">
+          <div class="stat-icon-wrap stat-icon-amber">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M10 3v10M10 16v1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="10" cy="17.5" r=".5" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="stat-content">
+            <span class="stat-label">Lowest Score</span>
+            <span class="stat-value" id="stat-low-val">—</span>
+          </div>
+          <div class="stat-trend" id="stat-low-sub">—</div>
+        </div>
+      </div>
+
+      <!-- INSIGHTS STRIP -->
+      <div id="insights-section" class="insights-section"></div>
+
+      <!-- SUBJECTS TABLE CARD -->
+      <div class="card table-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <h2 class="card-title">Subjects</h2>
+            <span class="subject-count-pill" id="subject-count-pill">0 subjects</span>
+          </div>
+
+          <!-- Controls row: search + sort + grade filter -->
+          <div class="table-controls">
+            <!-- Search -->
+            <div class="search-wrap">
+              <svg class="search-icon" width="15" height="15" viewBox="0 0 20 20" fill="none">
+                <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M15 15l-3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              <input class="search-input" id="search-input" type="text" placeholder="Search subjects…" />
+            </div>
+
+            <!-- Sort -->
+            <select class="sort-select" id="sort-select" aria-label="Sort subjects">
+              <option value="recently-added">Recently Added</option>
+              <option value="highest-score">Highest Score</option>
+              <option value="lowest-score">Lowest Score</option>
+              <option value="alpha-az">A → Z</option>
+              <option value="alpha-za">Z → A</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Grade Filter Pills -->
+        <div class="grade-filter-bar">
+          <span class="filter-label">Filter:</span>
+          <div class="grade-filter-pills">
+            <button class="filter-pill active" data-grade-filter="all">All</button>
+            <button class="filter-pill pill-A" data-grade-filter="A">Grade A</button>
+            <button class="filter-pill pill-B" data-grade-filter="B">Grade B</button>
+            <button class="filter-pill pill-C" data-grade-filter="C">Grade C</button>
+            <button class="filter-pill pill-D" data-grade-filter="D">Grade D</button>
+            <button class="filter-pill pill-F" data-grade-filter="F">Grade F</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="subjects-table" id="subjects-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Subject Name</th>
+                <th>Score</th>
+                <th>Grade</th>
+                <th>Performance</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="subjects-tbody"></tbody>
+          </table>
+        </div>
+
+        <!-- EMPTY STATE -->
+        <div class="empty-state" id="empty-state">
+          <div class="empty-icon">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+              <rect x="8" y="8" width="32" height="32" rx="8" stroke="currentColor" stroke-width="1.5" opacity=".3"/>
+              <path d="M17 24h14M17 18h14M17 30h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
+            </svg>
+          </div>
+          <p class="empty-title">No subjects added yet</p>
+          <p class="empty-desc">Add your first subject to start tracking performance</p>
+          <button class="btn btn-primary" id="btn-empty-add">Add Your First Subject</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SECTION: ADD SUBJECT ─── -->
+    <section class="section hidden" id="section-add-subject">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Add Subject</h1>
+          <p class="page-subtitle">Enter a new subject and score to track</p>
+        </div>
+      </div>
+
+      <div class="form-layout">
+        <div class="card form-card">
+          <div class="card-header">
+            <h2 class="card-title">Subject Details</h2>
+          </div>
+          <div class="form-body">
+            <div class="form-group">
+              <label class="form-label" for="input-name">
+                Subject Name <span class="required">*</span>
+              </label>
+              <input class="form-input" id="input-name" type="text"
+                placeholder="e.g. Mathematics, Physics…" maxlength="60" autocomplete="off" />
+              <span class="form-hint">Must be between 2–60 characters</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="input-score">
+                Score <span class="required">*</span>
+              </label>
+              <div class="score-input-wrap">
+                <input class="form-input score-input" id="input-score"
+                  type="number" min="0" max="100" placeholder="0 – 100" />
+                <div class="score-preview">
+                  <span class="preview-grade" id="preview-grade-badge">—</span>
+                </div>
+              </div>
+              <span class="form-hint">Enter a value between 0 and 100</span>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn btn-ghost" id="btn-clear-form">Clear</button>
+              <button class="btn btn-primary" id="btn-add-subject">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+                  <path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Add Subject
+              </button>
+            </div>
+
+            <div class="form-error hidden" id="form-error"></div>
+          </div>
+        </div>
+
+        <div class="card grade-legend-card">
+          <div class="card-header">
+            <h2 class="card-title">Grade Scale</h2>
+          </div>
+          <div class="grade-legend">
+            <div class="grade-row">
+              <span class="grade-badge grade-A">A</span>
+              <span class="grade-range">70 – 100</span>
+              <span class="grade-desc">Excellent</span>
+            </div>
+            <div class="grade-row">
+              <span class="grade-badge grade-B">B</span>
+              <span class="grade-range">60 – 69</span>
+              <span class="grade-desc">Good</span>
+            </div>
+            <div class="grade-row">
+              <span class="grade-badge grade-C">C</span>
+              <span class="grade-range">50 – 59</span>
+              <span class="grade-desc">Average</span>
+            </div>
+            <div class="grade-row">
+              <span class="grade-badge grade-D">D</span>
+              <span class="grade-range">40 – 49</span>
+              <span class="grade-desc">Below Average</span>
+            </div>
+            <div class="grade-row">
+              <span class="grade-badge grade-F">F</span>
+              <span class="grade-range">0 – 39</span>
+              <span class="grade-desc">Failing</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── SECTION: ANALYTICS ─── -->
+    <section class="section hidden" id="section-analytics">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Analytics</h1>
+          <p class="page-subtitle">Visualize your performance across all subjects</p>
+        </div>
+      </div>
+
+      <div class="analytics-grid">
+        <div class="card chart-card">
+          <div class="card-header">
+            <h2 class="card-title">Score Distribution</h2>
+            <span class="card-subtitle" id="chart-subtitle">Per subject</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="score-chart" width="600" height="260"></canvas>
+            <div class="chart-empty" id="chart-empty">
+              <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                <path d="M5 30l8-10 6 6 8-14 8 8"
+                  stroke="currentColor" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round" opacity=".3"/>
+              </svg>
+              <p>No data to visualize</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card grade-breakdown-card">
+          <div class="card-header">
+            <h2 class="card-title">Grade Breakdown</h2>
+          </div>
+          <div class="grade-breakdown" id="grade-breakdown"></div>
+        </div>
+      </div>
+
+      <div class="analytics-details" id="analytics-details"></div>
+    </section>
+
+  </main>
+
+  <!-- ═══ EDIT MODAL ═══ -->
+  <div class="modal-backdrop hidden" id="modal-backdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Edit Subject</h2>
+        <button class="modal-close" id="btn-cancel-edit" aria-label="Close modal">
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+            <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-id" />
+        <div class="form-group">
+          <label class="form-label" for="edit-name">Subject Name</label>
+          <input class="form-input" id="edit-name" type="text" maxlength="60" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="edit-score">Score</label>
+          <div class="score-input-wrap">
+            <input class="form-input score-input" id="edit-score" type="number" min="0" max="100" />
+            <div class="score-preview">
+              <span class="preview-grade" id="edit-grade-badge">—</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-error hidden" id="modal-error"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="btn-cancel-edit-2">Cancel</button>
+        <button class="btn btn-primary" id="btn-save-edit">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TOAST CONTAINER ═══ -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <!-- ES Module entry point -->
+  <script type="module" src="js/app.js"></script>
+  <!-- SW registered separately (non-module, runs after app) -->
+  <script type="module">
+    import { registerServiceWorker } from './js/registerSW.js';
+    registerServiceWorker();
+  </script>
+</body>
+</html>
