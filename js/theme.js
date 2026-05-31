@@ -29,4 +29,10 @@ export function applyTheme(theme) {
   if (metaTheme) {
     metaTheme.setAttribute('content', theme === 'dark' ? '#0dd4b8' : '#059c86');
   }
+
+  // Update sidebar label to reflect current state
+  const themeLabel = document.getElementById('theme-label');
+  if (themeLabel) {
+    themeLabel.textContent = theme === 'dark' ? 'Dark Mode' : 'Light Mode';
+  }
 }
